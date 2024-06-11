@@ -1,4 +1,5 @@
-import os, sys
+import sys
+from pathlib import Path
 from io import BytesIO
 from flask import Flask, render_template, send_file
 import webview
@@ -9,7 +10,7 @@ height = 800
 min_width = 790
 min_height = 630
 
-music_directory: list = [f"{os.path.expanduser('~')}\\Music"]
+music_directory: list = [Path.home() / "Music"]
 audio_files_info_dict = {}
 app = Flask(
     __name__,
@@ -65,17 +66,13 @@ def get_audio_file_dict(directory_paths: list):
         dict: 一个字典，其中键是文件名，值是绝对文件路径。
     """
     audio_files_dict = {}  # 创建一个空字典来存储文件名和绝对路径
+    audio_extensions = (".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac", ".wma", ".ape")
 
     for directory_path in directory_paths:
-        for root, dirs, files in os.walk(directory_path):
-            for filename in files:
-                if filename.lower().endswith(
-                    (".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac", ".wma", "ape")
-                ):
-                    file_abs_path = os.path.join(root, filename)  # 获取文件的绝对路径
-                    audio_files_dict[filename] = (
-                        file_abs_path  # 将文件名和绝对路径添加到字典中
-                    )
+        path = Path(directory_path)
+        for file_path in path.rglob("*"):
+            if file_path.suffix.lower() in audio_extensions:
+                audio_files_dict[file_path.name] = str(file_path.resolve())
 
     return audio_files_dict
 
