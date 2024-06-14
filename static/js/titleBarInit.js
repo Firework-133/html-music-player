@@ -204,14 +204,14 @@ function debounce(func, delay) {
     };
 }
 
-window.addEventListener('mousemove', debounce(async function (event) {
+window.addEventListener('mousemove', throttle(async function (event) {
     const isMaximized = await window.pywebview.api.isMaximized();
-    // 如果鼠标在顶部40px内，显示标题栏
+    // 如果鼠标在顶部80px内，显示标题栏
     if (isMaximized) {
-        if (event.clientY <= 40) {
+        if (event.clientY <= 80) {
             titleBar.style.transform = 'translateY(0%)';
         } else {
-            // 如果鼠标离开顶部40px，隐藏标题栏
+            // 如果鼠标离开顶部80px，隐藏标题栏
             titleBar.style.transform = 'translateY(-100%)';
         }
     }
@@ -224,10 +224,12 @@ window.addEventListener('resize', async () => {
     if (isMaximized) {
         maximizeButton.style.display = 'none';
         windowedButton.style.display = 'block';
+        titleBar.style.transform = 'translateY(-100%)';
         //drag.style.display = 'none';
     } else {
         maximizeButton.style.display = 'block';
         windowedButton.style.display = 'none';
+        titleBar.style.transform = 'translateY(0%)';
         //drag.style.display = 'block';
     }
 });
