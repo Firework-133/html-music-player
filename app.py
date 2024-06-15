@@ -210,7 +210,7 @@ def main():
     webview.start(
         evaluate_js,
         window,
-        debug=True,
+        # debug=True,
     )
     sys.exit()
 
