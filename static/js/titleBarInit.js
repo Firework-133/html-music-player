@@ -42,7 +42,7 @@ detectionZone.style.pointerEvents = 'none'; // 允许鼠标事件穿透检测区
 // 在拖拽逻辑中调用 restore() 方法
 dragRegion.addEventListener('pointermove', async (event) => {
     // 等待获取窗口最大化状态
-    const isMaximized = await window.pywebview.api.isMaximized();
+    //const isMaximized = await window.pywebview.api.isMaximized();
     if (event.buttons === 1) {
         // 如果窗口最大化，调用 restore() 方法
         if (isMaximized) {
@@ -205,7 +205,7 @@ function debounce(func, delay) {
 }
 
 window.addEventListener('mousemove', throttle(async function (event) {
-    const isMaximized = await window.pywebview.api.isMaximized();
+    //const isMaximized = await window.pywebview.api.isMaximized();
     // 如果鼠标在顶部80px内，显示标题栏
     if (isMaximized) {
         if (event.clientY <= 80) {
@@ -215,12 +215,16 @@ window.addEventListener('mousemove', throttle(async function (event) {
             titleBar.style.transform = 'translateY(-100%)';
         }
     }
-}, 350));
+}, 100));
+
+//窗口状态
+let isMaximized = false;
 
 //监听窗口变化
 window.addEventListener('resize', async () => {
     // Show the appropriate button based on window state
-    const isMaximized = await window.pywebview.api.isMaximized();
+    //const isMaximized = await window.pywebview.api.isMaximized();
+    isMaximized = await window.pywebview.api.isMaximized();
     if (isMaximized) {
         maximizeButton.style.display = 'none';
         windowedButton.style.display = 'block';
