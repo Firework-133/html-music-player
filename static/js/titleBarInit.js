@@ -115,6 +115,19 @@ detectionZone.addEventListener('mouseleave', async function () {
 */
 
 //添加按钮
+const refreshButton = document.createElement('button');
+//refreshButton.innerText = 'Refresh';
+refreshButton.style.backgroundImage = 'url("img/refresh-line.png")';
+refreshButton.style.width = '36px'; // 设置按钮宽度
+refreshButton.style.height = '36px'; // 设置按钮高度
+refreshButton.style.backgroundColor = 'transparent'; // 设置背景色为透明
+refreshButton.style.border = 'none'; // 去除边框
+refreshButton.style.backgroundSize = 'contain';
+refreshButton.onclick = () => {
+    window.location.href = '/refresh';
+    //location.reload();
+};
+
 const minimizeButton = document.createElement('button');
 //minimizeButton.innerText = 'Minimize';
 minimizeButton.style.backgroundImage = 'url("img/subtract-fill.png")';
@@ -168,7 +181,7 @@ closeButton.onclick = () => { window.pywebview.api.close(); };
 // 默认隐藏最小化窗口（程序默认是窗口运行的）
 windowedButton.style.display = 'none';
 
-
+buttonRow.appendChild(refreshButton);
 buttonRow.appendChild(minimizeButton);
 buttonRow.appendChild(maximizeButton);
 buttonRow.appendChild(windowedButton);

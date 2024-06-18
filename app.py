@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 from io import BytesIO
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, redirect, url_for
 import webview
 
 # 窗口相关设置
@@ -38,6 +38,11 @@ def pcindex_html():
 @app.route("/sounds/<music_name>")
 def play_music(music_name):
     return send_file(audio_files_info_dict[music_name])
+
+
+@app.route("/refresh")
+def refresh():
+    return redirect(url_for("index"))
 
 
 @app.route("/list.txt")
@@ -124,6 +129,9 @@ class pyApi:
     def close(self):
         window.destroy()
 
+    def loadTitleBar_js(self):
+        result = window.evaluate_js(loadTitleBar_js)
+
 
 # 窗口状态更新
 def on_maximized():
@@ -161,26 +169,38 @@ def on_restored():
         window.minimized = False
 
 
+def on_loaded():
+    # 加载时执行
+    result = window.evaluate_js(loadTitleBar_js)
+
+
 def on_closed():
     # print('窗口已关闭')
     pass
 
 
-# 窗口控制器
-def evaluate_js(window):
-    result = window.evaluate_js(
-        r"""
-window.addEventListener('DOMContentLoaded', function () {
-    const JSElement = document.createElement("script");
-    JSElement.setAttribute("type", "text/javascript");
-    JSElement.setAttribute("src", "js/titleBarInit.js");
-    JSElement.classList.add('pywebview-drag-region');
-    document.body.appendChild(JSElement);
-});
+loadTitleBar_js = r"""
 
+function loadTitleBarScript() {
+    // 检查是否已经存在相同的script元素
+    if (!document.querySelector('#titleBarScript')) {
+        const JSElement = document.createElement("script");
+        JSElement.setAttribute("type", "text/javascript");
+        JSElement.setAttribute("src", "js/titleBarInit.js");
+        JSElement.setAttribute("id", "titleBarScript");
+        JSElement.classList.add('pywebview-drag-region');
+        document.body.appendChild(JSElement);
+    }
+}
 
+// 当DOM内容加载完成时调用
+window.addEventListener('DOMContentLoaded', loadTitleBarScript);
 """
-    )
+
+
+# 第一次初始化时加载
+def evaluate_js(window):
+    pass
 
 
 api = pyApi()
@@ -203,6 +223,7 @@ window.events.minimized += on_minimized
 window.events.resized += on_resized
 window.events.restored += on_restored
 window.events.moved += on_moved
+window.events.loaded += on_loaded
 
 
 def main():
