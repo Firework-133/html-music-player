@@ -230,23 +230,36 @@ window.addEventListener('mousemove', throttle(async function (event) {
     }
 }, 100));
 
-//窗口状态
-let isMaximized = false;
+// 获取窗口状态的异步函数
+async function checkWindowState() {
+    return await window.pywebview.api.isMaximized();
+}
 
-//监听窗口变化
+// 页面加载时检查窗口状态并更新 UI
+window.onload = async () => {
+    isMaximized = await checkWindowState();
+    updateUI();
+};
+
+// 监听窗口变化
 window.addEventListener('resize', async () => {
-    // Show the appropriate button based on window state
-    //const isMaximized = await window.pywebview.api.isMaximized();
-    isMaximized = await window.pywebview.api.isMaximized();
+    isMaximized = await checkWindowState();
+    updateUI();
+});
+
+// 更新 UI 的函数
+function updateUI() {
+    // 根据窗口状态显示适当的按钮
     if (isMaximized) {
         maximizeButton.style.display = 'none';
         windowedButton.style.display = 'block';
         titleBar.style.transform = 'translateY(-100%)';
-        //drag.style.display = 'none';
     } else {
         maximizeButton.style.display = 'block';
         windowedButton.style.display = 'none';
         titleBar.style.transform = 'translateY(0%)';
-        //drag.style.display = 'block';
     }
-});
+}
+
+// 在页面加载时初始化窗口状态
+let isMaximized;
